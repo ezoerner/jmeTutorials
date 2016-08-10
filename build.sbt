@@ -13,5 +13,8 @@ val commonSettings = Seq(
 val `hello-simple` = project
     .settings(commonSettings: _*)
 
+val `hello-node` = project
+    .settings(commonSettings: _*)
+
 
 def jME3(name: String, config: Configuration = Compile) = "com.jme3" % s"jme3-$name" % "3.0.10" % config
