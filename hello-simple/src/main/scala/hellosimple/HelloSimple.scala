@@ -6,7 +6,7 @@ import com.jme3.math.ColorRGBA
 import com.jme3.scene.Geometry
 import com.jme3.scene.shape.Box
 
-object HelloJME3 extends SimpleApplication {
+object HelloSimple extends SimpleApplication {
 
   def main(args: Array[String]): Unit = {
     start()
