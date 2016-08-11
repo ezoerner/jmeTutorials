@@ -2,7 +2,7 @@ package helloloop
 
 import com.jme3.app.SimpleApplication
 import com.jme3.material.Material
-import com.jme3.math.ColorRGBA.{Black, Blue}
+import com.jme3.math.ColorRGBA._
 import com.jme3.math.{ColorRGBA, Vector3f}
 import com.jme3.scene.Geometry
 import com.jme3.scene.shape.Box
@@ -20,8 +20,7 @@ class HelloLoop extends SimpleApplication {
 
   def simpleInitApp(): Unit = {
     val mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md")
-    val c = Black
-    mat.setColor("Color", c)
+    mat.setColor("Color", currentColorTarget)
     player1.setMaterial(mat)
     player1.setLocalTranslation(new Vector3f(2, 0, 0))
 
@@ -37,15 +36,10 @@ class HelloLoop extends SimpleApplication {
   override def simpleUpdate(tpf: Float): Unit = {
     player1.rotate(0, 2 * tpf, 0)
 
-    val color = Option[ColorRGBA](player1 getUserData "color") getOrElse Black
-    val increment = tpf
-
-
-
-    val newColor1 = new ColorRGBA(color.r + increment, color.g, color.b, 1.0f)
-    val newColor2 = normalize(newColor1, increment)
-    player1.setUserData("color", newColor2)
-    player1.getMaterial.setColor("Color", newColor2)
+    val color1 = Option[ColorRGBA](player1 getUserData "color") getOrElse currentColorTarget
+    val color2 = nextColor(color1, tpf / 2)
+    player1.setUserData("color", color2)
+    player1.getMaterial.setColor("Color", color2)
 
     val prevScaleDirection: Int = Option[Int](player2 getUserData "scaleDirection") getOrElse 1
     val prevScale: Float = Option[Float](player2 getUserData "scale") getOrElse 1.0f
@@ -61,10 +55,41 @@ class HelloLoop extends SimpleApplication {
     player2.setLocalScale(newScale)
   }
 
-  def normalize(color: ColorRGBA, increment: Float): ColorRGBA = color match {
-    case c if c.r >= 1.0f ⇒ normalize(new ColorRGBA(0.0f, c.g + increment, c.b, 1.0f), increment)
-    case c if c.g >= 1.0f ⇒ normalize(new ColorRGBA(0.0f, 0.0f, c.b + increment, 1.0f), increment)
-    case c if c.b >= 1.0f ⇒ Black
-    case _ ⇒ color
+  val Purple = new ColorRGBA(85f/255f, 26f/255f, 139f/255f, 1.0f)
+  val colorTargets = Red :: Orange :: Yellow :: Green :: Blue :: Purple :: Nil
+  def newTargetIterator = colorTargets.iterator
+  var currentTargets = newTargetIterator
+  val targetIterator = Iterator.continually {
+    if (currentTargets.hasNext) {
+      currentTargets.next()
+    } else {
+      currentTargets = newTargetIterator
+      currentTargets.next()
+    }
+  }
+  var currentColorTarget = targetIterator.next()
+  def nextColor(color: ColorRGBA, changeAmount: Float): ColorRGBA = {
+    if (color == currentColorTarget) {
+      currentColorTarget = targetIterator.next()
+    }
+    incrementTowards(color, currentColorTarget, changeAmount)
+  }
+
+  def incrementTowards(beginColor: ColorRGBA, finalColor: ColorRGBA, increment: Float): ColorRGBA = {
+    def nextV(s: Float, f: Float): Float = {
+      val sgn = math.signum(f.compare(s))
+      val n = s + sgn * increment
+      sgn match {
+        case 1 if n > f ⇒ f
+        case -1 if n < f ⇒ f
+        case _ ⇒ n
+      }
+    }
+    val next = new ColorRGBA(
+      nextV(beginColor.r, finalColor.r),
+      nextV(beginColor.g, finalColor.g),
+      nextV(beginColor.b, finalColor.b),
+      1.0f)
+    next
   }
 }
