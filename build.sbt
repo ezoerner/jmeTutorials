@@ -28,4 +28,7 @@ val `hello-node` = project
 val `hello-assets` = project
     .settings(commonSettings: _*)
 
+val `hello-loop` = project
+    .settings(commonSettings: _*)
+
 def jME3(name: String, config: Configuration = Compile) = "com.jme3" % s"jme3-$name" % "3.0.10" % config
