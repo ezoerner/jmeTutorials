@@ -17,6 +17,7 @@ object HelloLoop {
 class HelloLoop extends SimpleApplication {
   protected val player1: Geometry = new Geometry("color cube", new Box(1, 1, 1))
   protected val player2: Geometry = new Geometry("blue cube", new Box(1, 1, 1))
+  protected val player3: Geometry = new Geometry("rolling cube", new Box(0.5f, 0.5f, 0.5f))
 
   def simpleInitApp(): Unit = {
     val mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md")
@@ -29,6 +30,11 @@ class HelloLoop extends SimpleApplication {
     player2.setMaterial(mat2)
     player2.setLocalTranslation(new Vector3f(-2, 0, 0))
 
+    val mat3 = mat.clone
+    mat3.setColor("Color", Cyan)
+    player3.setMaterial(mat3)
+    player3.setLocalTranslation(new Vector3f(0, 2, -15))
+    rootNode.attachChild(player3)
     rootNode.attachChild(player1)
     rootNode.attachChild(player2)
   }
@@ -53,11 +59,16 @@ class HelloLoop extends SimpleApplication {
     player2.setUserData("scaleDirection", newDirection)
     player2.setUserData("scale", newScale)
     player2.setLocalScale(newScale)
+
+    player3.rotate(2*tpf, 0 , 0)
+    player3.move(0, 0, 2*tpf)
   }
 
-  val Purple = new ColorRGBA(85f/255f, 26f/255f, 139f/255f, 1.0f)
+  val Purple = new ColorRGBA(85f / 255f, 26f / 255f, 139f / 255f, 1.0f)
   val colorTargets = Red :: Orange :: Yellow :: Green :: Blue :: Purple :: Nil
+
   def newTargetIterator = colorTargets.iterator
+
   var currentTargets = newTargetIterator
   val targetIterator = Iterator.continually {
     if (currentTargets.hasNext) {
@@ -68,6 +79,7 @@ class HelloLoop extends SimpleApplication {
     }
   }
   var currentColorTarget = targetIterator.next()
+
   def nextColor(color: ColorRGBA, changeAmount: Float): ColorRGBA = {
     if (color == currentColorTarget) {
       currentColorTarget = targetIterator.next()
