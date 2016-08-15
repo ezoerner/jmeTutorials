@@ -4,6 +4,7 @@ version := "1.0"
 val commonSettings = Seq(
   scalaVersion := "2.12.0-M5",
   resolvers += Resolver.bintrayRepo("jmonkeyengine", "com.jme3"),
+  unmanagedBase := (baseDirectory in ThisBuild).value / "lib",
   libraryDependencies ++= Seq(
     jME3("core"), // Core libraries needed for all jME3 projects
     jME3("desktop", Runtime), // Parts of the jME3 API that are only compatible with desktop renderers, needed for image loading on desktop
