@@ -1,9 +1,8 @@
-val root = (project in file("."))
-    .settings(name := "jmeTutorials",
-      version := "1.0")
+name := "jmeTutorials"
+version := "1.0"
 
 val commonSettings = Seq(
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.12.0-M5",
   resolvers += Resolver.bintrayRepo("jmonkeyengine", "com.jme3"),
   libraryDependencies ++= Seq(
     jME3("core"), // Core libraries needed for all jME3 projects
@@ -29,6 +28,9 @@ val `hello-assets` = project
     .settings(commonSettings: _*)
 
 val `hello-loop` = project
+    .settings(commonSettings: _*)
+
+val `hello-input` = project
     .settings(commonSettings: _*)
 
 def jME3(name: String, config: Configuration = Compile) = "com.jme3" % s"jme3-$name" % "3.0.10" % config
