@@ -6,8 +6,11 @@ import com.jme3.app.SimpleApplication
 import com.jme3.input.KeyInput._
 import com.jme3.input.controls.{ActionListener, KeyTrigger}
 import com.jme3.light.DirectionalLight
+import com.jme3.material.Material
+import com.jme3.math.ColorRGBA.Green
 import com.jme3.math.{ColorRGBA, Vector3f}
 import com.jme3.scene.Node
+import com.jme3.scene.debug.SkeletonDebugger
 
 object HelloAnimation {
   def main(args: Array[String]): Unit = {
@@ -45,9 +48,16 @@ class HelloAnimation extends SimpleApplication with AnimEventListener {
       resetChannel(channel)
       channel
     }
+
+    val skeletonDebug = new SkeletonDebugger("skeleton", control.getSkeleton)
+    val mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md")
+    mat.setColor("Color", Green)
+    mat.getAdditionalRenderState.setDepthTest(false)
+    skeletonDebug.setMaterial(mat)
+    player.attachChild(skeletonDebug)
   }
 
-  def onAnimCycleDone(control: AnimControl, channel: AnimChannel, animName: String): Unit = resetChannel(channel)
+  override def onAnimCycleDone(control: AnimControl, channel: AnimChannel, animName: String): Unit = resetChannel(channel)
 
   def resetChannel(channel: AnimChannel): Unit = {
     channel.setAnim(defaultAnimation, 0.50f)
@@ -55,7 +65,7 @@ class HelloAnimation extends SimpleApplication with AnimEventListener {
     channel.setSpeed(1f)
   }
 
-  def onAnimChange(control: AnimControl, channel: AnimChannel, animName: String): Unit = { }
+  override def onAnimChange(control: AnimControl, channel: AnimChannel, animName: String): Unit = { }
 
   /** Custom Keybinding: Map named actions to inputs. */
   private def initKeys(): Unit = {
