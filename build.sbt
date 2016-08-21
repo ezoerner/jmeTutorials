@@ -43,4 +43,7 @@ val `hello-animation` = project
 val `hello-picking` = project
     .settings(commonSettings: _*)
 
+val `hello-collision` = project
+    .settings(commonSettings: _*)
+
 def jME3(name: String, config: Configuration = Compile) = "com.jme3" % s"jme3-$name" % "3.0.10" % config
